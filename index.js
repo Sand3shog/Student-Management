@@ -2,16 +2,25 @@ import express from 'express';
 
 //backend app
 const app = express();
+
+app.use(express.json());  //to make app understand json
+
+const studentList = [{
+    id: 1,
+    name: 'salman khan',
+},
+{
+    id: 2,
+    name: 'sharukh khan',
+
+}];
+
 app.get("/",(req, res) => {
     return res.send('Hello World!');
 });
 
 app.post("/posts",(req, res) => {
     return res.send('Post your article here! hehe');
-})
-
-app.post("/student/add",(req, res) => {
-    return res.status(200).send({message: 'user added'});
 })
 
 app.put("/student/update",(req, res) => {
@@ -40,6 +49,36 @@ app.get("/product/list", (req, res) =>{
     return res.status(200).send({message: 'your product here'})
 
 });
+
+app.post("/student/add", (req, res) =>{
+    
+    const newStudent = req.body;
+    // const newStudent = {
+    //     id: 3,
+    //     name: 'nikhil uprety',
+    // };
+    studentList.push(newStudent);
+    return res.status(201).send({message: "added student successfully.."});
+})
+
+//get actor by id
+app.get("/student/details/:id", (req, res) =>{
+    
+    const studentId = req.params.id;
+    // const actorId = req.body.id;
+    const studentDetail = studentList.find((item) => {
+        return item.id === Number(studentId);   //in case your number is stored in string eg '56'
+    });
+    if(!studentDetail){
+        return res.status(404).send({ message: "Student doesnot exist"})
+    };
+
+    return res.status(200).send(
+        {
+        message: "success", 
+        studentData: studentDetail
+    });
+})
 
 //network port
 const PORT = 8000;   
