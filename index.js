@@ -3,17 +3,6 @@ import express from 'express';
 //backend app
 const app = express();
 
-app.use(express.json());  //to make app understand json
-
-const studentList = [{
-    id: 1,
-    name: 'salman khan',
-},
-{
-    id: 2,
-    name: 'sharukh khan',
-
-}];
 
 app.get("/",(req, res) => {
     return res.send('Hello World!');
