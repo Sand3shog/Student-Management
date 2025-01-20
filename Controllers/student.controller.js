@@ -1,5 +1,5 @@
 import express from 'express';
-import Student from "./student.model.js";
+import Student from "../student.model.js";
 import bcrypt from 'brcypt';
 const router =  express.Router();
 

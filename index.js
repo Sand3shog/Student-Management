@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import Student from "./student.model.js";
-import { studentController } from './student.controller.js';
+import { studentController } from './Controllers/student.controller.js';
 //backend app
 const app = express();
 
