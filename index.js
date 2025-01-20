@@ -1,73 +1,28 @@
 import express from 'express';
-
+import mongoose from 'mongoose';
+import Student from "./student.model.js";
+import { studentController } from './student.controller.js';
 //backend app
 const app = express();
 
+app.use(express.json());
 
-app.get("/",(req, res) => {
-    return res.send('Hello World!');
-});
+//db connect
+const dbConnect = async() => {
+    try {
+        const url = "mongodb+srv://sandeshmaharzan5:sandesh08@sandesh.5wg9e.mongodb.net/College-Student?retryWrites=true&w=majority&appName=sandesh";
+        await mongoose.connect(url);
+        console.log("DB connection successful..");
+    } catch (error) {
+        console.log('Db connection failed...');
+        console.log(error.message);
+    }
+};
 
-app.post("/posts",(req, res) => {
-    return res.send('Post your article here! hehe');
-})
+dbConnect();
 
-app.put("/student/update",(req, res) => {
-    return res.status(201).send({message: 'student updated!!'});
-})
-
-app.delete("/student/delete",(req, res) => {
-    return res.status(200).send({message: 'student deleted!!'});
-})
-
-//create an api to insert course
-app.post("/course/add",(req, res) => {
-    return res.status(201).send({message: 'course added!!'});
-})
-
-app.delete("/course/delete",(req, res) => {
-    return res.status(200).send({message: 'course delete!!'});
-})
-
-
-app.put("/course/update",(req, res) => {
-    return res.status(200).send({message: 'course updated!!'});
-})
-
-app.get("/product/list", (req, res) =>{
-    return res.status(200).send({message: 'your product here'})
-
-});
-
-app.post("/student/add", (req, res) =>{
-    
-    const newStudent = req.body;
-    // const newStudent = {
-    //     id: 3,
-    //     name: 'nikhil uprety',
-    // };
-    studentList.push(newStudent);
-    return res.status(201).send({message: "added student successfully.."});
-})
-
-//get actor by id
-app.get("/student/details/:id", (req, res) =>{
-    
-    const studentId = req.params.id;
-    // const actorId = req.body.id;
-    const studentDetail = studentList.find((item) => {
-        return item.id === Number(studentId);   //in case your number is stored in string eg '56'
-    });
-    if(!studentDetail){
-        return res.status(404).send({ message: "Student doesnot exist"})
-    };
-
-    return res.status(200).send(
-        {
-        message: "success", 
-        studentData: studentDetail
-    });
-})
+//register routes or controller
+app.use(studentController);
 
 //network port
 const PORT = 8000;   
