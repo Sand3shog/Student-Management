@@ -1,7 +1,10 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import Student from "./student.model.js";
+import Student from "./Controllers/student.model.js";
 import { studentController } from './Controllers/student.controller.js';
+// import jwt from 'jsonwebtoken';
+import { productController } from './product/product.controller.js';
+
 //backend app
 const app = express();
 
@@ -23,6 +26,7 @@ dbConnect();
 
 //register routes or controller
 app.use(studentController);
+app.use(productController);
 
 //network port
 const PORT = 8000;   

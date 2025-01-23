@@ -1,11 +1,23 @@
 import express from 'express';
-import Student from "../student.model.js";
+import Student from "./student.model.js";
 import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
+import studentValidationSchema from './student.validation.js';
+import yup from 'yup';
+
 const router =  express.Router();
 
 // register req and password hashing
-router.post("/student/register", async (req, res) => {
+router.post("/student/register", async (req, res, next) => {
+    //data validation
+    try {
+        req.body = await studentValidationSchema.validate(req.body);
+        next();
+    } catch (error) {
+        return res.status(400).send({message: error.message});
+    }  
+}, async (req, res) => {
     const newStudent = req.body;
 
     //find student with provided email
@@ -29,7 +41,19 @@ router.post("/student/register", async (req, res) => {
 })
 
 // login request
-router.post("/student/login", async (req, res) => {
+router.post("/student/login", async(req, res, next) => {
+    const loginUserValidationSchema = yup.object ({
+        email: yup.string().required().email().max(100),
+        password: yup.string().required().max(100).trim(),
+    });
+
+    try {
+        req.body = await loginUserValidationSchema.validate(req.body);
+        next();
+    } catch (error) {
+        return res.status(400).send({message: error.message});
+    }  
+}, async (req, res) => {
     const loginCredentials = req.body;
 
 
@@ -57,7 +81,15 @@ router.post("/student/login", async (req, res) => {
     //remove password
     student.password = undefined;
 
-    return res.status(200).send({message: 'Login successfull...'});
+    //generate access token using jwt where email is encrypted through payload
+    const secretKey = "sushilganduhokoteshwormabasxa";
+    const payload = {email: student.email};
+
+    const token = jwt.sign(payload, secretKey, {
+        expiresIn: '8d',
+    });
+
+    return res.status(200).send({message: 'Login successfull...', studentDetails: student, accessToken: token});
 });
 
 // list request
